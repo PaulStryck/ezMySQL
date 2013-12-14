@@ -21,15 +21,15 @@
 		4 => 'SQL Server database connection is not active',
 		5 => 'Unexpected error while trying to select database'
 	);
-	
+
 	/**********************************************************************
 	*  ezSQL non duplicating data type id's; converting dtype ids to str
 	*/
-	
+
 	$ezsql_sqlsrv_type2str_non_dup = array
 	(
 		-5 => 'bigint', -7 => 'bit', 1 => 'char', 91 => 'date', -155 => 'datetimeoffset', 6 => 'float', -4 => 'image', 4 => 'int', -8 => 'nchar',
-		-10 => 'ntext', 2 => 'numeric', -9 => 'nvarchar', 7 => 'real', 5 => 'smallint', -1 => 'text', -154 => 'time', -6 => 'tinyint', -151 => 'udt', 
+		-10 => 'ntext', 2 => 'numeric', -9 => 'nvarchar', 7 => 'real', 5 => 'smallint', -1 => 'text', -154 => 'time', -6 => 'tinyint', -151 => 'udt',
 		-11 => 'uniqueidentifier', -3 => 'varbinary', 12 => 'varchar', -152 => 'xml'
 	);
 
@@ -42,7 +42,7 @@
 	if ( ! function_exists ('sqlsrv_connect') ) die('<b>Fatal Error:</b> ezSQL_sqlsrv requires the Microsoft PHP SQL Drivers to be installed. Also enable MS-SQL extension in PHP.ini file ');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sqlsrv requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_sqlsrv extends ezSQLcore
+	class Sqlsrv extends \EzSQL\Core
 	{
 
 		var $dbuser = false;
@@ -60,7 +60,7 @@
 		*  same time as initialising the ezSQL_mssql class
 		*/
 
-		function ezSQL_sqlsrv($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true)
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true)
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
@@ -314,12 +314,12 @@
 					1 => "/unix_timestamp\(([^\/]{0,})\)/i", 	//replace unix_timestamp function. Doesn't work in MS-Sql
 					2 => $limit_str);													//replace LIMIT keyword. Works only on MySql not on MS-Sql with TOP keyword
 			$replacements = array(
-					0 => "getdate()", 
-					1 => "\\1", 
+					0 => "getdate()",
+					1 => "\\1",
 					2 => "");
 			preg_match($limit_str, $query, $regs);
 			$query = preg_replace($patterns, $replacements, $query);
-			
+
 			if(isset($regs[2]))
 				$query = str_ireplace("SELECT ", "SELECT TOP ".$regs[3]." ", $query);
 			else if(isset($regs[1]))
@@ -363,7 +363,7 @@
 						break;
 				}
 			}
-			
+
 			return $datatype;
 		}
 
