@@ -25,7 +25,9 @@
 	if ( ! function_exists ('OCILogon') ) die('<b>Fatal Error:</b> ezSQL_oracle8_9 requires Oracle OCI Lib to be compiled and/or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_oracle8_9 requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class Oracle89 extends \EzSQL\Core
+	namespace \EzSQL;
+
+	class Oracle89 extends Core
 	{
 
 		var $dbuser = false;
