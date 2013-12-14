@@ -24,21 +24,23 @@
 	if ( ! function_exists ('sqlite_open') ) die('<b>Fatal Error:</b> ezSQL_sqlite requires SQLite Lib to be compiled and or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sqlite requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_sqlite extends ezSQLcore
+	namespace \EzSQL;
+
+	class Sqlite extends Core
 	{
 
 		var $rows_affected = false;
 
 		/**********************************************************************
-		*  Constructor - allow the user to perform a qucik connect at the 
+		*  Constructor - allow the user to perform a qucik connect at the
 		*  same time as initialising the ezSQL_sqlite class
 		*/
 
-		function ezSQL_sqlite($dbpath='', $dbname='')
+		function __construct($dbpath='', $dbname='')
 		{
-			// Turn on track errors 
+			// Turn on track errors
 			ini_set('track_errors',1);
-			
+
 			if ( $dbpath && $dbname )
 			{
 				$this->connect($dbpath, $dbname);
@@ -52,7 +54,7 @@
 		function connect($dbpath='', $dbname='')
 		{
 			global $ezsql_sqlite_str; $return_val = false;
-			
+
 			// Must have a user and a password
 			if ( ! $dbpath || ! $dbname )
 			{
@@ -68,12 +70,12 @@
 			else
 				$return_val = true;
 
-			return $return_val;			
+			return $return_val;
 		}
 
 		/**********************************************************************
 		*  In the case of SQLite quick_connect is not really needed
-		*  because std. connect already does what quick connect does - 
+		*  because std. connect already does what quick connect does -
 		*  but for the sake of consistency it has been included
 		*/
 
@@ -83,7 +85,7 @@
 		}
 
 		/**********************************************************************
-		*  No real equivalent of mySQL select in SQLite 
+		*  No real equivalent of mySQL select in SQLite
 		*  once again, function included for the sake of consistency
 		*/
 
@@ -99,17 +101,17 @@
 
 		function escape($str)
 		{
-			return sqlite_escape_string(stripslashes(preg_replace("/[\r\n]/",'',$str)));				
+			return sqlite_escape_string(stripslashes(preg_replace("/[\r\n]/",'',$str)));
 		}
 
 		/**********************************************************************
-		*  Return SQLite specific system date syntax 
+		*  Return SQLite specific system date syntax
 		*  i.e. Oracle: SYSDATE Mysql: NOW()
 		*/
 
 		function sysdate()
 		{
-			return 'now';			
+			return 'now';
 		}
 
 		/**********************************************************************
@@ -118,12 +120,12 @@
 
 		// ==================================================================
 		//	Basic Query	- see docs for more detail
-	
+
 		function query($query)
 		{
 
 			// For reg expressions
-			$query = str_replace("/[\n\r]/",'',trim($query)); 
+			$query = str_replace("/[\n\r]/",'',trim($query));
 
 			// initialise return
 			$return_val = 0;
@@ -149,27 +151,27 @@
 				$this->show_errors ? trigger_error($err_str,E_USER_WARNING) : null;
 				return false;
 			}
-			
+
 			// Query was an insert, delete, update, replace
 			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
 			{
 				$this->rows_affected = @sqlite_changes($this->dbh);
-				
+
 				// Take note of the insert_id
 				if ( preg_match("/^(insert|replace)\s+/i",$query) )
 				{
-					$this->insert_id = @sqlite_last_insert_rowid($this->dbh);	
+					$this->insert_id = @sqlite_last_insert_rowid($this->dbh);
 				}
-				
+
 				// Return number fo rows affected
 				$return_val = $this->rows_affected;
-	
+
 			}
 			// Query was an select
 			else
 			{
-				
-				// Take note of column info	
+
+				// Take note of column info
 				$i=0;
 				while ($i < @sqlite_num_fields($this->result))
 				{
@@ -178,7 +180,7 @@
 					$this->col_info[$i]->max_length = null;
 					$i++;
 				}
-				
+
 				// Store Query Results
 				$num_rows=0;
 				while ($row =  @sqlite_fetch_array($this->result,SQLITE_ASSOC) )
@@ -191,17 +193,17 @@
 
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
-				
+
 				// Return number of rows selected
 				$return_val = $this->num_rows;
-			
+
 			}
 
 			// If debug ALL queries
 			$this->trace||$this->debug_all ? $this->debug() : null ;
 
 			return $return_val;
-		
+
 		}
 
 	}
