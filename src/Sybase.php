@@ -4,7 +4,7 @@
 
 	/**********************************************************************
 	*  Author: Muhammad Iyas (iyasilias@gmail.com)
-	*  Web...: 
+	*  Web...:
 	*  Name..: ezSQL_sybase
 	*  Desc..: Sybase ASE component (part of ezSQL database abstraction library) - based on ezSql_mssql library class.
 	*
@@ -30,7 +30,7 @@
 	if ( ! function_exists ('sybase_connect') ) die('<b>Fatal Error:</b> ezSQL_sybase requires ntwdblib.dll to be present in your winowds\system32 folder. Also enable sybase extenstion in PHP.ini file ');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sybase requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_sybase extends ezSQLcore
+	class Sybase extends \EzSQL\Core
 	{
 
 		var $dbuser = false;
@@ -38,7 +38,7 @@
 		var $dbname = false;
 		var $dbhost = false;
 		var $rows_affected = false;
-		
+
 		//if we want to convert Queries in MySql syntax to Sybase syntax. Yes, there
 		//are some differences in query syntax.
 		var $convertMySqlTosybaseQuery = TRUE;
@@ -48,7 +48,7 @@
 		*  same time as initialising the ezSQL_sybase class
 		*/
 
-		function ezSQL_sybase($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlTosybaseQuery=true)
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlTosybaseQuery=true)
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
