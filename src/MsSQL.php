@@ -2,47 +2,36 @@
 
 
 	/**********************************************************************
-	*  Author: davisjw (davisjw@gmail.com)
+	*  Author: ashank (ashank@gmail.com)
 	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_sqlsrv
-	*  Desc..: Microsoft Sql Server component (MS drivers) (part of ezSQL databse abstraction library) - based on ezSql_msSql library class.
+	*  Name..: ezSQL_mssql
+	*  Desc..: Microsoft Sql Server component (part of ezSQL databse abstraction library) - based on ezSql_mySql library class.
 	*
 	*/
 
 	/**********************************************************************
-	*  ezSQL error strings - sqlsrv
+	*  ezSQL error strings - mssql
 	*/
 
-	$ezsql_sqlsrv_str = array
+	$ezsql_mssql_str = array
 	(
 		1 => 'Require $dbuser and $dbpassword to connect to a database server',
-		2 => 'Error establishing sqlsrv database connection. Correct user/password? Correct hostname? Database server running?',
+		2 => 'Error establishing mssql database connection. Correct user/password? Correct hostname? Database server running?',
 		3 => 'Require $dbname to select a database',
 		4 => 'SQL Server database connection is not active',
 		5 => 'Unexpected error while trying to select database'
 	);
-	
-	/**********************************************************************
-	*  ezSQL non duplicating data type id's; converting dtype ids to str
-	*/
-	
-	$ezsql_sqlsrv_type2str_non_dup = array
-	(
-		-5 => 'bigint', -7 => 'bit', 1 => 'char', 91 => 'date', -155 => 'datetimeoffset', 6 => 'float', -4 => 'image', 4 => 'int', -8 => 'nchar',
-		-10 => 'ntext', 2 => 'numeric', -9 => 'nvarchar', 7 => 'real', 5 => 'smallint', -1 => 'text', -154 => 'time', -6 => 'tinyint', -151 => 'udt', 
-		-11 => 'uniqueidentifier', -3 => 'varbinary', 12 => 'varchar', -152 => 'xml'
-	);
-
-
 
 	/**********************************************************************
-	*  ezSQL Database specific class - sqlsrv
+	*  ezSQL Database specific class - mssql
 	*/
 
-	if ( ! function_exists ('sqlsrv_connect') ) die('<b>Fatal Error:</b> ezSQL_sqlsrv requires the Microsoft PHP SQL Drivers to be installed. Also enable MS-SQL extension in PHP.ini file ');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sqlsrv requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+	if ( ! function_exists ('mssql_connect') ) die('<b>Fatal Error:</b> ezSQL_mssql requires ntwdblib.dll to be present in your winowds\system32 folder. Also enable MS-SQL extenstion in PHP.ini file ');
+	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_mssql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_sqlsrv extends ezSQLcore
+	namespace \EzSQL;
+
+	class MsSQL extends Core
 	{
 
 		var $dbuser = false;
@@ -60,7 +49,7 @@
 		*  same time as initialising the ezSQL_mssql class
 		*/
 
-		function ezSQL_sqlsrv($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true)
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true)
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
@@ -77,7 +66,8 @@
 		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
 		{
 			$return_val = false;
-			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost) ) ;
+			if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
+			else if ( ! $this->select($dbname) ) ;
 			else $return_val = true;
 			return $return_val;
 		}
@@ -86,22 +76,22 @@
 		*  Try to connect to mssql database server
 		*/
 
-		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		function connect($dbuser='', $dbpassword='', $dbhost='localhost')
 		{
-			global $ezsql_sqlsrv_str; $return_val = false;
+			global $ezsql_mssql_str; $return_val = false;
 
-			// Blank dbuser assumes Windows Authentication
-			$connectionOptions["Database"] =$dbname;
-			if ( $dbuser ) {
-				$connectionOptions["UID"] = $dbuser;
-				$connectionOptions["PWD"] = $dbpassword;
-			}
-//			$connectionOptions = array("UID" => $dbuser, "PWD" => $dbpassword, "Database" => $dbname);
-
-			if ( ( $this->dbh = @sqlsrv_connect($dbhost, $connectionOptions) ) === false )
+			// Must have a user and a password
+			if ( ! $dbuser )
 			{
-				$this->register_error($ezsql_sqlsrv_str[2].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_sqlsrv_str[2],E_USER_WARNING) : null;
+				$this->register_error($ezsql_mssql_str[1].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($ezsql_mssql_str[1],E_USER_WARNING) : null;
+			}
+			// Try to establish the server database handle
+
+			else if ( ! $this->dbh = @mssql_connect($dbhost,$dbuser,$dbpassword) )
+			{
+				$this->register_error($ezsql_mssql_str[2].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($ezsql_mssql_str[2],E_USER_WARNING) : null;
 			}
 			else
 			{
@@ -114,6 +104,45 @@
 			return $return_val;
 		}
 
+		/**********************************************************************
+		*  Try to select a mssql database
+		*/
+
+		function select($dbname='')
+		{
+			global $ezsql_mssql_str; $return_val = false;
+
+			// Must have a database name
+			if ( ! $dbname )
+			{
+				$this->register_error($ezsql_mssql_str[3].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($ezsql_mssql_str[3],E_USER_WARNING) : null;
+			}
+
+			// Must have an active database connection
+			else if ( ! $this->dbh )
+			{
+				$this->register_error($ezsql_mssql_str[4].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($ezsql_mssql_str[4],E_USER_WARNING) : null;
+			}
+
+			// Try to connect to the database
+
+			else if ( !@mssql_select_db($dbname,$this->dbh) )
+			{
+				$str = $ezsql_mssql_str[5];
+
+				$this->register_error($str.' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
+			}
+			else
+			{
+				$this->dbname = $dbname;
+				$return_val = true;
+			}
+
+			return $return_val;
+		}
 
 		/**********************************************************************
 		*  Format a mssql string correctly for safe mssql insert
@@ -130,19 +159,14 @@
 
 		}
 
-
 		/**********************************************************************
 		*  Return mssql specific system date syntax
 		*  i.e. Oracle: SYSDATE mssql: NOW(), MS-SQL : getDate()
-		*
-		*  The SQLSRV drivers pull back the data into a Date class.  Converted
-		*   it to a string inside of SQL in order to prevent this from ocurring
-		*  ** make sure to use " AS <label>" after calling this...
 		*/
 
 		function sysdate()
 		{
-			return "convert(varchar, GetDate(), 9)";
+			return 'getDate()';
 		}
 
 		/**********************************************************************
@@ -156,6 +180,7 @@
 			//convert the query
 			if($this->convertMySqlToMSSqlQuery == true)
 				$query = $this->ConvertMySqlToMSSql($query);
+
 
 
 			// Initialise return
@@ -187,44 +212,62 @@
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
-				$this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost);
+				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
+				$this->select($this->dbname);
 			}
+
+
+
 
 			// Perform the query via std mssql_query function..
 
-			$this->result = @sqlsrv_query($this->dbh, $query);
+			$this->result = @mssql_query($query);
+
+
 
 			// If there is an error then take note of it..
-			if ($this->result === false )
+			if ($this->result == false )
 			{
-				$errors = sqlsrv_errors();
-				if (!empty($errors)) {
-					$is_insert = true;
-					foreach ($errors as $error) {
-						$sqlError = "ErrorCode: ".$error['code']." ### State: ".$error['SQLSTATE']." ### Error Message: ".$error['message']." ### Query: ".$query;
-						$this->register_error($sqlError);
-						$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;
-					}
+
+				$get_errorcodeSql = "SELECT @@ERROR as errorcode";
+				$error_res = @mssql_query($get_errorcodeSql, $this->dbh);
+				$errorCode = @mssql_result($error_res, 0, "errorcode");
+
+				$get_errorMessageSql = "SELECT severity as errorSeverity, text as errorText FROM sys.messages  WHERE message_id = ".$errorCode  ;
+				$errormessage_res =  @mssql_query($get_errorMessageSql, $this->dbh);
+				if($errormessage_res)
+				{
+					$errorMessage_Row = @mssql_fetch_row($errormessage_res);
+					$errorSeverity = $errorMessage_Row[0];
+					$errorMessage = $errorMessage_Row[1];
 				}
 
+				$sqlError = "ErrorCode: ".$errorCode." ### Error Severity: ".$errorSeverity." ### Error Message: ".$errorMessage." ### Query: ".$query;
+
+				$is_insert = true;
+				$this->register_error($sqlError);
+				$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;
 				return false;
 			}
+
+
+
 
 			// Query was an insert, delete, update, replace
 			$is_insert = false;
 			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
 			{
-				$this->rows_affected = @sqlsrv_rows_affected($this->dbh);
+				$this->rows_affected = @mssql_rows_affected($this->dbh);
 
 				// Take note of the insert_id
 				if ( preg_match("/^(insert|replace)\s+/i",$query) )
 				{
 
-					$identityresultset = @sqlsrv_query($this->dbh, "select SCOPE_IDENTITY()");
+					$identityresultset = @mssql_query("select SCOPE_IDENTITY()");
 
 					if ($identityresultset != false )
 					{
-						$identityrow = @sqlsrv_fetch($identityresultset);
+						$identityrow = @mssql_fetch_row($identityresultset);
 						$this->insert_id = $identityrow[0];
 					}
 
@@ -239,25 +282,17 @@
 
 				// Take note of column info
 				$i=0;
-				foreach ( @sqlsrv_field_metadata( $this->result) as $field ) {
-					foreach ($field as $name => $value) {
-						$name = strtolower($name);
-						if ($name == "size") $name = "max_length";
-						else if ($name == "type") $name = "typeid";
-						//DEFINED FOR E_STRICT
-						$col = new StdClass();
-						$col->{$name} = $value;
-					}
+				while ($i < @mssql_num_fields($this->result))
+				{
+					$this->col_info[$i] = @mssql_fetch_field($this->result);
+					$i++;
 
-					$col->type = $this->get_datatype($col);
-					$this->col_info[$i++] = $col;
-					unset($col);
 				}
 
 				// Store Query Results
 				$num_rows=0;
 
-				while ( $row = @sqlsrv_fetch_object($this->result) )
+				while ( $row = @mssql_fetch_object($this->result) )
 				{
 
 					// Store relults as an objects within main array
@@ -265,7 +300,7 @@
 					$num_rows++;
 				}
 
-				@sqlsrv_free_stmt($this->result);
+				@mssql_free_result($this->result);
 
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
@@ -304,78 +339,50 @@
 		function ConvertMySqlToMSSql($query)
 		{
 
+
 			//replace the '`' character used for MySql queries, but not
 			//supported in MS-Sql
 
 			$query = str_replace("`", "", $query);
-			$limit_str = "/LIMIT[^\w]{1,}([0-9]{1,})([\,]{0,})([0-9]{0,})/i";
-			$patterns = array(
-					0 => "/FROM_UNIXTIME\(([^\/]{0,})\)/i", 	//replace From UnixTime command in MS-Sql, doesn't work
-					1 => "/unix_timestamp\(([^\/]{0,})\)/i", 	//replace unix_timestamp function. Doesn't work in MS-Sql
-					2 => $limit_str);													//replace LIMIT keyword. Works only on MySql not on MS-Sql with TOP keyword
-			$replacements = array(
-					0 => "getdate()", 
-					1 => "\\1", 
-					2 => "");
-			preg_match($limit_str, $query, $regs);
-			$query = preg_replace($patterns, $replacements, $query);
-			
-			if(isset($regs[2]))
+
+			//replace From UnixTime command in MS-Sql, doesn't work
+
+			$pattern = "FROM_UNIXTIME\(([^/]{0,})\)";
+			$replacement = "getdate()";
+			//ereg($pattern, $query, $regs);
+			//we can get the Unix Time function parameter value from this string
+			//$valueInsideFromUnixTime = $regs[1];
+
+			$query = eregi_replace($pattern, $replacement, $query);
+
+
+			//replace LIMIT keyword. Works only on MySql not on MS-Sql
+			//replace it with TOP keyword
+
+			$pattern = "LIMIT[^\w]{1,}([0-9]{1,})([\,]{0,})([0-9]{0,})";
+			$replacement = "";
+			eregi($pattern, $query, $regs);
+			$query = eregi_replace($pattern, $replacement, $query);
+
+			if($regs[2])
 				$query = str_ireplace("SELECT ", "SELECT TOP ".$regs[3]." ", $query);
-			else if(isset($regs[1]))
-				$query  = str_ireplace("SELECT ", "SELECT TOP ".$regs[1]." ", $query);
+			else
+				{
+				if($regs[1])
+					$query  = str_ireplace("SELECT ", "SELECT TOP ".$regs[1]." ", $query);
+				}
+
+
+			//replace unix_timestamp function. Doesn't work in MS-Sql
+			$pattern = "unix_timestamp\(([^/]{0,})\)";
+			$replacement = "\\1";
+			$query = eregi_replace($pattern, $replacement, $query);
 
 			return $query;
 
 		}
 
-		function get_datatype($col)
-		{
-			global $ezsql_sqlsrv_type2str_non_dup;
-			$datatype = "dt not defined";
-			if(isset($col->typeid))
-			{
-				switch ($col->typeid) {
-					case -2 :
-						if ($col->max_length < 8000)
-							$datatype = "binary";
-						else
-							$datatype = "timestamp";
-						break;
-					case 3 :
-						if (($col->scale == 4) && ($col->precision == 19))
-							$datatype = "money";
-						else if (($col->scale == 4) && ($col->precision == 10))
-							$datatype = "smallmoney";
-						else
-							$datatype = "decimal";
-						break;
-					case 93 :
-						if (($col->precision == 16) && ($col->scale == 0))
-							$datatype = "smalldatetime";
-						else if (($col->precision == 23) && ($col->scale == 3))
-							$datatype = "datetime";
-						else
-							$datatype = "datetime2";
-						break;
-					default :
-						$datatype = $ezsql_sqlsrv_type2str_non_dup[$col->typeid];
-						break;
-				}
-			}
-			
-			return $datatype;
-		}
 
 
-		/**********************************************************************
-		*  Close the active SQLSRV connection
-		*/
 
-		function disconnect()
-		{
-			@sqlsrv_close($this->dbh);
-		}
-
-
-	} // end class
+	}

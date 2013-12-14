@@ -25,7 +25,9 @@
 	if ( ! function_exists ('cubrid_connect') ) die('<b>Fatal Error:</b> ezSQL_cubrid requires CUBRID PHP Driver to be compiled and or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_cubrid requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_cubrid extends ezSQLcore
+	namespace \EzSQL;
+
+	class Cubrid extends Core
 	{
 
 		var $dbuser = false;
@@ -40,7 +42,7 @@
 		*  same time as initialising the ezSQL_cubrid class
 		*/
 
-		function ezSQL_cubrid($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
@@ -58,7 +60,7 @@
 		{
 			return $this->connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000);
 		}
-        
+
 		/**********************************************************************
 		*  Try to connect to CUBRID database server
 		*/
@@ -66,10 +68,10 @@
 		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
 		{
 			global $ezSQL_cubrid_str; $return_val = false;
-			
+
 			// Keep track of how long the DB takes to connect
 			$this->timer_start('db_connect_time');
-            
+
 			// Must have a user and a password
 			if ( ! $dbuser || ! $dbname )
 			{
@@ -161,7 +163,7 @@
 
 			// Count how many queries there have been
 			$this->num_queries++;
-			
+
 			// Start timer
 			$this->timer_start($this->num_queries);
 
@@ -176,7 +178,7 @@
 				{
 					$this->trace_log[] = $this->debug(false);
 				}
-				
+
 				return $cache;
 			}
 
@@ -261,14 +263,14 @@
 			return $return_val;
 
 		}
-		
+
 		/**********************************************************************
 		*  Close the active CUBRID connection
 		*/
 
 		function disconnect()
 		{
-			@cubrid_close($this->dbh);	
+			@cubrid_close($this->dbh);
 		}
 
 	}
