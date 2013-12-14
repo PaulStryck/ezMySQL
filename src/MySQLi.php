@@ -28,7 +28,7 @@
 	if ( ! function_exists ('mysqli_connect') ) die('<b>Fatal Error:</b> ezSQL_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_mysqli extends ezSQLcore
+	class Mysqli extends Core
 	{
 
 		var $dbuser = false;
@@ -74,15 +74,15 @@
 		function connect($dbuser='', $dbpassword='', $dbhost='localhost', $dbport=false)
 		{
 			global $ezsql_mysqli_str; $return_val = false;
-			
+
 			// Keep track of how long the DB takes to connect
 			$this->timer_start('db_connect_time');
-			
+
 			// If port not specified (new connection issued), get it
 			if( ! $dbport ) {
 				list( $dbhost, $dbport ) = $this->get_host_port( $dbhost, 3306 );
 			}
-			
+
 			// Must have a user and a password
 			if ( ! $dbuser )
 			{
@@ -152,10 +152,10 @@
 						$charsets[] = $row["Charset"];
 					}
 					if(in_array($encoding,$charsets)){
-						$this->dbh->query("SET NAMES '".$encoding."'");						
+						$this->dbh->query("SET NAMES '".$encoding."'");
 					}
 				}
-				
+
 				$return_val = true;
 			}
 
@@ -220,7 +220,7 @@
 
 			// Count how many queries there have been
 			$this->num_queries++;
-			
+
 			// Start timer
 			$this->timer_start($this->num_queries);
 
@@ -235,7 +235,7 @@
 				{
 					$this->trace_log[] = $this->debug(false);
 				}
-				
+
 				return $cache;
 			}
 
@@ -260,7 +260,7 @@
 
 			// Query was an insert, delete, update, replace
 			$is_insert = false;
-			
+
 			//if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter)\s+/i",$query) )
 			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|begin|commit|rollback|set)/i",$query) )
 			{
@@ -323,7 +323,7 @@
 			return $return_val;
 
 		}
-		
+
 		/**********************************************************************
 		*  Close the active mySQLi connection
 		*/
