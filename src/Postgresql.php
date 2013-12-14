@@ -29,7 +29,7 @@
 	if ( ! function_exists ('pg_connect') ) die('<b>Fatal Error:</b> ezSQL_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_postgresql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_postgresql extends ezSQLcore
+	class Postgresql extends \EzSQL\Core
 	{
 
 		var $dbuser = false;
@@ -43,7 +43,7 @@
 		*  same time as initialising the ezSQL_postgresql class
 		*/
 
-		function ezSQL_postgresql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
@@ -54,7 +54,7 @@
 
 		/**********************************************************************
 		*  In the case of PostgreSQL quick_connect is not really needed
-		*  because std. connect already does what quick connect does - 
+		*  because std. connect already does what quick connect does -
 		*  but for the sake of consistency it has been included
 		*/
 
@@ -83,7 +83,7 @@
 			}
 			// Try to establish the server database handle
 			else if ( ! $this->dbh = @pg_connect("host=$dbhost port=$port dbname=$dbname user=$dbuser password=$dbpassword", true) )
-			{       
+			{
 				$this->register_error($ezsql_postgresql_str[2].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_postgresql_str[2],E_USER_WARNING) : null;
 			}
@@ -106,7 +106,7 @@
 		*/
 
 		function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
-		{  
+		{
 			$return_val = false;
 			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost,true) ) ;
 			else if ( ! $this->select($dbname) ) ;
@@ -186,7 +186,7 @@
 
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
-			{   
+			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost, $this->port);
 			}
 
@@ -227,8 +227,8 @@
 			else
 			{               $num_rows=0;
                 			//if ( $this->result )  //may be needed but my tests did not
-                			//{	
-                			
+                			//{
+
         					// =======================================================
         					// Take note of column info
 
@@ -272,11 +272,11 @@
 			return $return_val;
 
 		}
-		
+
 		/**
 		* Close the database connection
 		*/
-		
+
 		function disconnect()
 		{
 			if ( $this->dbh )
