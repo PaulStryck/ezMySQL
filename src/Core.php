@@ -24,6 +24,8 @@
 	*  sets once returned
 	*/
 
+	namespace \EzSQL;
+
 	class Core
 	{
 
