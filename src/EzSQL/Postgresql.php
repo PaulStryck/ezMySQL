@@ -1,5 +1,7 @@
 <?php
 
+	namespace EzSQL;
+
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@jvmultimedia.com)
 	*  Web...: http://twitter.com/justinvincent
@@ -27,9 +29,7 @@
 	*/
 
 	if ( ! function_exists ('pg_connect') ) die('<b>Fatal Error:</b> ezSQL_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_postgresql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	namespace \EzSQL;
 
 	class Postgresql extends Core
 	{

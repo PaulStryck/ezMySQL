@@ -1,5 +1,6 @@
 <?php
 
+	namespace EzSQL;
 
 	/**********************************************************************
 	*  Author: davisjw (davisjw@gmail.com)
@@ -40,9 +41,7 @@
 	*/
 
 	if ( ! function_exists ('sqlsrv_connect') ) die('<b>Fatal Error:</b> ezSQL_sqlsrv requires the Microsoft PHP SQL Drivers to be installed. Also enable MS-SQL extension in PHP.ini file ');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sqlsrv requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	namespace \EzSQL;
 
 	class Sqlsrv extends Core
 	{

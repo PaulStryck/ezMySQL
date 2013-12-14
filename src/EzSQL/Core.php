@@ -1,5 +1,7 @@
 <?php
 
+	namespace EzSQL;
+
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@vip.ie)
 	*  Web...: http://justinvincent.com
@@ -23,8 +25,6 @@
 	*  Core class containg common functions to manipulate query result
 	*  sets once returned
 	*/
-
-	namespace \EzSQL;
 
 	class Core
 	{
