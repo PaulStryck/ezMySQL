@@ -30,9 +30,7 @@
 	if ( ! function_exists ('sybase_connect') ) die('<b>Fatal Error:</b> ezSQL_sybase requires ntwdblib.dll to be present in your winowds\system32 folder. Also enable sybase extenstion in PHP.ini file ');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sybase requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	namespace \EzSQL;
-
-	class Sybase extends Core
+	class Sybase extends \EzSQL\Core
 	{
 
 		var $dbuser = false;
