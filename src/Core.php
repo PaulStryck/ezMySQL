@@ -24,7 +24,7 @@
 	*  sets once returned
 	*/
 
-	class ezSQLcore
+	class Core
 	{
 
 		var $trace            = false;  // same as $debug_all
@@ -58,8 +58,9 @@
 		*  Constructor
 		*/
 
-		function ezSQLcore()
+		function __construct()
 		{
+
 		}
 
 		/**********************************************************************

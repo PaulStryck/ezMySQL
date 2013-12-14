@@ -28,7 +28,7 @@
 	if ( ! function_exists ('mysql_connect') ) die('<b>Fatal Error:</b> ezSQL_mysql requires mySQL Lib to be compiled and or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_mysql extends ezSQLcore
+	class MySQL extends \EzSQL\Core
 	{
 
 		var $dbuser = false;
@@ -43,7 +43,7 @@
 		*  same time as initialising the ezSQL_mysql class
 		*/
 
-		function ezSQL_mysql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
@@ -73,7 +73,7 @@
 		function connect($dbuser='', $dbpassword='', $dbhost='localhost')
 		{
 			global $ezsql_mysql_str; $return_val = false;
-			
+
 			// Keep track of how long the DB takes to connect
 			$this->timer_start('db_connect_time');
 
@@ -146,10 +146,10 @@
 						$charsets[] = $row["Charset"];
 					}
 					if(in_array($encoding,$charsets)){
-						mysql_query("SET NAMES '".$encoding."'");						
+						mysql_query("SET NAMES '".$encoding."'");
 					}
 				}
-				
+
 				$return_val = true;
 			}
 
@@ -215,7 +215,7 @@
 
 			// Count how many queries there have been
 			$this->num_queries++;
-			
+
 			// Start timer
 			$this->timer_start($this->num_queries);
 
@@ -230,7 +230,7 @@
 				{
 					$this->trace_log[] = $this->debug(false);
 				}
-				
+
 				return $cache;
 			}
 
@@ -316,14 +316,14 @@
 			return $return_val;
 
 		}
-		
+
 		/**********************************************************************
 		*  Close the active mySQL connection
 		*/
 
 		function disconnect()
 		{
-			@mysql_close($this->dbh);	
+			@mysql_close($this->dbh);
 		}
 
 	}
