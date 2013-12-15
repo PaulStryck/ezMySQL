@@ -29,6 +29,12 @@
 	abstract class Core
 	{
 
+		public static $user = '';
+		public static $name = '';
+		public static $dbname = '';
+		public static $host = 'localhost';
+		public static $encoding = '';
+
 		var $trace            = false;  // same as $debug_all
 		var $debug_all        = false;  // same as $trace
 		var $debug_called     = false;
