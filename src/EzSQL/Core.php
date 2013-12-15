@@ -26,7 +26,7 @@
 	*  sets once returned
 	*/
 
-	class Core
+	abstract class Core
 	{
 
 		var $trace            = false;  // same as $debug_all
@@ -60,7 +60,7 @@
 		*  Constructor
 		*/
 
-		function __construct()
+		protected function __construct()
 		{
 
 		}
