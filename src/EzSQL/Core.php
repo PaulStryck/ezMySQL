@@ -66,11 +66,13 @@
 		*  Constructor
 		*/
 
-		public static function getInstance($options = array())
+		public static function getInstance($options)
         {
             static $inst = null;
             if ($inst === null)
             {
+            	if(!is_array($options))
+            		$options = array();
 
                 $credentials = new \StdClass();
                 $credentials->user = (array_key_exists('user', $options) ?  $options['user'] : self::$_user);
