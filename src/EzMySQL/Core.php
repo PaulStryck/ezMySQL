@@ -16,7 +16,7 @@
 	*  ezSQL Constants
 	*/
 
-	define('EZSQL_VERSION','3.0');
+	define('EZMYSQL_VERSION','1.0');
 	define('OBJECT','OBJECT',true);
 	define('ARRAY_A','ARRAY_A',true);
 	define('ARRAY_N','ARRAY_N',true);
@@ -415,7 +415,7 @@
 
 			if ( ! $this->vardump_called )
 			{
-				echo "<font color=800080><b>ezSQL</b> (v".EZSQL_VERSION.") <b>Variable Dump..</b></font>\n\n";
+				echo "<font color=800080><b>ezSQL</b> (v".EZMYSQL_VERSION.") <b>Variable Dump..</b></font>\n\n";
 			}
 
 			$var_type = gettype ($mixed);
@@ -469,7 +469,7 @@
 			// Only show ezSQL credits once..
 			if ( ! $this->debug_called )
 			{
-				echo "<font color=800080 face=arial size=2><b>ezSQL</b> (v".EZSQL_VERSION.") <b>Debug..</b></font><p>\n";
+				echo "<font color=800080 face=arial size=2><b>ezSQL</b> (v".EZMYSQL_VERSION.") <b>Debug..</b></font><p>\n";
 			}
 
 			if ( $this->last_error )
