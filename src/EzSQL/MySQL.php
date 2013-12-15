@@ -44,32 +44,6 @@
         *  same time as initialising the ezSQL_mysql class
         */
 
-        public static function getInstance($options)
-        {
-            static $inst = null;
-            if ($inst === null)
-            {
-                if(!is_array($options))
-                    $options = array();
-
-                $credentials = new \StdClass();
-                $credentials->user = (array_key_exists('user', $options) ?  $options['user'] : self::$_user);
-                $credentials->pass = (array_key_exists('pass', $options) ?  $options['pass'] : self::$_pass);
-                $credentials->dbname = (array_key_exists('dbname', $options) ?  $options['dbname'] : self::$_dbname);
-                $credentials->host = (array_key_exists('host', $options) ?  $options['host'] : self::$_host);
-                $credentials->encoding = (array_key_exists('encoding', $options) ?  $options['encoding'] : self::$_encoding);
-
-                $inst = new Database(
-                                     $credentials->user,
-                                     $credentials->pass,
-                                     $credentials->dbname,
-                                     $credentials->host,
-                                     $credentials->encoding
-                                     );
-            }
-            return $inst;
-        }
-
         protected function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
         {
             $this->dbuser = $dbuser;
