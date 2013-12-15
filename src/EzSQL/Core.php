@@ -30,7 +30,7 @@
 	{
 
 		public static $_user = '';
-		public static $_name = '';
+		public static $_pass = '';
 		public static $_dbname = '';
 		public static $_host = 'localhost';
 		public static $_encoding = '';
