@@ -1,5 +1,5 @@
 {
-    "name": "PaulStryck/ezsql",
+    "name": "PaulStryck/ezMySQL",
     "description": "PHP class to make interacting with a database ridiculusly easy.",
     "license": "LGPL",
     "authors": [
@@ -12,7 +12,7 @@
     },
     "autoload": {
         "psr-0" : {
-            "EzSQL" : "src"
+            "EzMySQL" : "src"
         }
     }
 }
