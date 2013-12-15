@@ -1,6 +1,6 @@
 <?php
 
-    namespace EzSQL;
+    namespace EzMySQL;
 
     /**********************************************************************
     *  Author: Justin Vincent (jv@jvmultimedia.com)
