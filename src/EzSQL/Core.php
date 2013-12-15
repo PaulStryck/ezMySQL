@@ -16,7 +16,7 @@
 	*  ezSQL Constants
 	*/
 
-	define('EZSQL_VERSION','2.17');
+	define('EZSQL_VERSION','3.0');
 	define('OBJECT','OBJECT',true);
 	define('ARRAY_A','ARRAY_A',true);
 	define('ARRAY_N','ARRAY_N',true);
