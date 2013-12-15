@@ -53,11 +53,11 @@
                     $options = array();
 
                 $credentials = new \StdClass();
-                $credentials->user = (array_key_exists('user', $options) ?  $options['user'] : self::$user);
-                $credentials->pass = (array_key_exists('pass', $options) ?  $options['pass'] : self::$pass);
-                $credentials->dbname = (array_key_exists('dbname', $options) ?  $options['dbname'] : self::$dbname);
-                $credentials->host = (array_key_exists('host', $options) ?  $options['host'] : self::$host);
-                $credentials->encoding = (array_key_exists('encoding', $options) ?  $options['encoding'] : self::$encoding);
+                $credentials->user = (array_key_exists('user', $options) ?  $options['user'] : self::$_user);
+                $credentials->pass = (array_key_exists('pass', $options) ?  $options['pass'] : self::$_pass);
+                $credentials->dbname = (array_key_exists('dbname', $options) ?  $options['dbname'] : self::$_dbname);
+                $credentials->host = (array_key_exists('host', $options) ?  $options['host'] : self::$_host);
+                $credentials->encoding = (array_key_exists('encoding', $options) ?  $options['encoding'] : self::$_encoding);
 
                 $inst = new Database(
                                      $credentials->user,
