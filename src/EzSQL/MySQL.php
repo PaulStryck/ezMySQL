@@ -29,7 +29,7 @@
 
     if ( ! function_exists ('mysql_connect') ) die('<b>Fatal Error:</b> ezSQL_mysql requires mySQL Lib to be compiled and or linked in to the PHP engine');
 
-    class Mysql extends Core
+    final class Mysql extends Core
     {
 
         var $dbuser = false;
@@ -44,7 +44,33 @@
         *  same time as initialising the ezSQL_mysql class
         */
 
-        function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
+        public static function getInstance($options)
+        {
+            static $inst = null;
+            if ($inst === null)
+            {
+                if(!is_array($options))
+                    $options = array();
+
+                $credentials = new \StdClass();
+                $credentials->user = (array_key_exists('user', $options) ?  $options['user'] : self::$user);
+                $credentials->pass = (array_key_exists('pass', $options) ?  $options['pass'] : self::$pass);
+                $credentials->dbname = (array_key_exists('dbname', $options) ?  $options['dbname'] : self::$dbname);
+                $credentials->host = (array_key_exists('host', $options) ?  $options['host'] : self::$host);
+                $credentials->encoding = (array_key_exists('encoding', $options) ?  $options['encoding'] : self::$encoding);
+
+                $inst = new Database(
+                                     $credentials->user,
+                                     $credentials->pass,
+                                     $credentials->dbname,
+                                     $credentials->host,
+                                     $credentials->encoding
+                                     );
+            }
+            return $inst;
+        }
+
+        protected function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
         {
             $this->dbuser = $dbuser;
             $this->dbpassword = $dbpassword;
