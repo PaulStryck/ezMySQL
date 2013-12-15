@@ -16,7 +16,7 @@
 	*  ezSQL Constants
 	*/
 
-	define('EZMYSQL_VERSION','1.0');
+	define('EZMYSQL_VERSION','1.1');
 	define('OBJECT','OBJECT',true);
 	define('ARRAY_A','ARRAY_A',true);
 	define('ARRAY_N','ARRAY_N',true);
