@@ -1,5 +1,7 @@
 <?php
 
+	namespace EzSQL;
+
 	/**********************************************************************
 	*  Author: Juergen Bouché (jbouche@nurfuerspam.de)
 	*  Web...: http://www.juergenbouche.de
@@ -26,11 +28,9 @@
 	*/
 
 	if ( ! function_exists ('mysqli_connect') ) die('<b>Fatal Error:</b> ezSQL_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	namespace \EzSQL;
 
-	class Mysqli extends Core
+	class MySQLi extends Core
 	{
 
 		var $dbuser = false;
@@ -46,7 +46,7 @@
 		*  same time as initialising the ezSQL_mysqli class
 		*/
 
-		function ezSQL_mysqli($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;

@@ -1,5 +1,7 @@
 <?php
 
+	namespace EzSQL;
+
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@vip.ie)
 	*  Web...: http://justinvincent.com
@@ -14,7 +16,7 @@
 	*  ezSQL Constants
 	*/
 
-	define('EZSQL_VERSION','2.17');
+	define('EZSQL_VERSION','3.0');
 	define('OBJECT','OBJECT',true);
 	define('ARRAY_A','ARRAY_A',true);
 	define('ARRAY_N','ARRAY_N',true);
@@ -24,10 +26,14 @@
 	*  sets once returned
 	*/
 
-	namespace \EzSQL;
-
-	class Core
+	abstract class Core
 	{
+
+		public static $_user = '';
+		public static $_pass = '';
+		public static $_dbname = '';
+		public static $_host = 'localhost';
+		public static $_encoding = '';
 
 		var $trace            = false;  // same as $debug_all
 		var $debug_all        = false;  // same as $trace
@@ -60,7 +66,33 @@
 		*  Constructor
 		*/
 
-		function __construct()
+		public static function getInstance($options)
+        {
+            static $inst = null;
+            if ($inst === null)
+            {
+            	if(!is_array($options))
+            		$options = array();
+
+                $credentials = new \StdClass();
+                $credentials->user = (array_key_exists('user', $options) ?  $options['user'] : self::$_user);
+                $credentials->pass = (array_key_exists('pass', $options) ?  $options['pass'] : self::$_pass);
+                $credentials->dbname = (array_key_exists('dbname', $options) ?  $options['dbname'] : self::$_dbname);
+                $credentials->host = (array_key_exists('host', $options) ?  $options['host'] : self::$_host);
+                $credentials->encoding = (array_key_exists('encoding', $options) ?  $options['encoding'] : self::$_encoding);
+
+                $inst = new static(
+                                     $credentials->user,
+                                     $credentials->pass,
+                                     $credentials->dbname,
+                                     $credentials->host,
+                                     $credentials->encoding
+                                     );
+            }
+            return $inst;
+        }
+
+		protected function __construct()
 		{
 
 		}
